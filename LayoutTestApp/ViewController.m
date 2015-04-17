@@ -18,8 +18,8 @@
 
     UIView *view1 = [[UIView alloc] init];
     view1.backgroundColor = [UIColor blueColor];
-    UIView *view2 = [FlowMaster viewFromVisualFormats:@[@"[h1](15)",
-                                                        @"[h2](15)"]
+    UIView *view2 = [FlowMaster viewFromVisualFormats:@[@"[h1]",
+                                                        @"[h2](10)"]
                                      variableBindings:hv];
     view2.backgroundColor = [UIColor greenColor];
     UIView *view3 = [[UIView alloc] init];

@@ -173,8 +173,13 @@ static CGFloat const kFlowMasterPadding = 15.0;
     NSRegularExpression *heightRegex = [NSRegularExpression regularExpressionWithPattern:heightPattern options:0 error:nil];
     NSTextCheckingResult *heightMatch = [heightRegex firstMatchInString:visualFormat options:0 range:NSMakeRange(0, [visualFormat length])];
     if (heightMatch) {
-        NSString *height = [visualFormat substringWithRange:[heightMatch rangeAtIndex:1]];
-        return [height floatValue];
+        NSRange heightValueRange = [heightMatch rangeAtIndex:1];
+        if (heightValueRange.length > 0) {
+            NSString *height = [visualFormat substringWithRange:[heightMatch rangeAtIndex:1]];
+            return [height floatValue];
+        } else {
+            return -1;
+        }
     } else {
         return -1;
     }
