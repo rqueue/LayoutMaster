@@ -10,9 +10,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    UIView *h1 = [UIView new];
+    h1.backgroundColor = [UIColor brownColor];
+    UIView *h2 = [UIView new];
+    h2.backgroundColor = [UIColor whiteColor];
+    NSDictionary *hv = NSDictionaryOfVariableBindings(h1, h2);
+
     UIView *view1 = [[UIView alloc] init];
     view1.backgroundColor = [UIColor blueColor];
-    UIView *view2 = [[UIView alloc] init];
+    UIView *view2 = [FlowMaster viewFromVisualFormats:@[@"[h1](15)",
+                                                        @"[h2](15)"]
+                                     variableBindings:hv];
     view2.backgroundColor = [UIColor greenColor];
     UIView *view3 = [[UIView alloc] init];
     view3.backgroundColor = [UIColor redColor];

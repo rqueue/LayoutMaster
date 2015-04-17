@@ -144,7 +144,7 @@ static CGFloat const kFlowMasterPadding = 15.0;
             NSString *view = [formatRemaining substringWithRange:[match rangeAtIndex:1]];
             NSString *width = nil;
             NSRange widthRange = [match rangeAtIndex:2];
-            if (widthRange.length > o {
+            if (widthRange.length > 0) {
                 width = [formatRemaining substringWithRange:widthRange];
             }
 
