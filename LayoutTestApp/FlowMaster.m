@@ -135,27 +135,27 @@ static CGFloat const kFlowMasterPadding = 15.0;
     NSString *pattern = @"\\[(\\w+)(?:\\((\\d+)\\))?\\]";
     NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
 
-    CGFloat height = [self heightForVisualFormat:visualFormat];
+    NSString *heightString = [self heightStringForVisualFormat:visualFormat];
 
     while ([formatRemaining length] > 0) {
 //        NSLog(@"format: %@", formatRemaining);
         NSTextCheckingResult *match = [regex firstMatchInString:formatRemaining options:0 range:NSMakeRange(0, [formatRemaining length])];
         if (match) {
-            NSString *view = [formatRemaining substringWithRange:[match rangeAtIndex:1]];
-            NSString *width = nil;
+            NSString *viewString = [formatRemaining substringWithRange:[match rangeAtIndex:1]];
+            NSString *widthString = nil;
             NSRange widthRange = [match rangeAtIndex:2];
             if (widthRange.length > 0) {
-                width = [formatRemaining substringWithRange:widthRange];
+                widthString = [formatRemaining substringWithRange:widthRange];
             }
 
             FlowItem *flowItem = [[FlowItem alloc] init];
             flowItem.visualFormat = [formatRemaining substringWithRange:[match rangeAtIndex:0]];
-            flowItem.viewName = view;
-            flowItem.width = [width floatValue];
-            flowItem.widthType = width ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
-            flowItem.height = height;
-            flowItem.heightType = height >= 0 ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
-            flowItem.view = [variableBindings objectForKey:view];
+            flowItem.viewName = viewString;
+            flowItem.width = [widthString floatValue];
+            flowItem.widthType = widthString ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
+            flowItem.height = [heightString floatValue];
+            flowItem.heightType = heightString ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
+            flowItem.view = [variableBindings objectForKey:viewString];
             [flowItems addObject:flowItem];
 
             formatRemaining = [formatRemaining substringFromIndex:match.range.location + match.range.length];
@@ -168,20 +168,19 @@ static CGFloat const kFlowMasterPadding = 15.0;
     return [flowItems copy];
 }
 
-+ (CGFloat)heightForVisualFormat:(NSString *)visualFormat {
++ (NSString *)heightStringForVisualFormat:(NSString *)visualFormat {
     NSString *heightPattern = @"\\[.+\\](?:\\((\\d+)\\))?";
     NSRegularExpression *heightRegex = [NSRegularExpression regularExpressionWithPattern:heightPattern options:0 error:nil];
     NSTextCheckingResult *heightMatch = [heightRegex firstMatchInString:visualFormat options:0 range:NSMakeRange(0, [visualFormat length])];
     if (heightMatch) {
         NSRange heightValueRange = [heightMatch rangeAtIndex:1];
         if (heightValueRange.length > 0) {
-            NSString *height = [visualFormat substringWithRange:[heightMatch rangeAtIndex:1]];
-            return [height floatValue];
+            return [visualFormat substringWithRange:[heightMatch rangeAtIndex:1]];
         } else {
-            return -1;
+            return nil;
         }
     } else {
-        return -1;
+        return nil;
     }
 }
 
