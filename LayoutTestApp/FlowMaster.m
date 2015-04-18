@@ -1,7 +1,8 @@
 #import "FlowMaster.h"
 #import "FlowItem.h"
 
-static CGFloat const kFlowMasterPadding = 15.0;
+static CGFloat const kFlowMasterVerticalPadding = 10.0;
+static CGFloat const kFlowMasterHorizontalPadding = 10.0;
 static NSString * const kFlowMasterEqualWidthSyntax = @"==";
 
 @implementation FlowMaster
@@ -21,7 +22,7 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
 
     for (NSUInteger row = 0; row < [flowItemsRows count]; row++) {
         if (row > 0) {
-            height += kFlowMasterPadding;
+            height += kFlowMasterVerticalPadding;
         }
 
         CGFloat rowWidth = 0;
@@ -75,7 +76,7 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
                                                                              toItem:aboveView
                                                                           attribute:NSLayoutAttributeBottom
                                                                          multiplier:1.0
-                                                                           constant:kFlowMasterPadding]];
+                                                                           constant:kFlowMasterVerticalPadding]];
             }
 
             if (row == [flowItemsRows count] - 1) {
@@ -109,12 +110,12 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
                 NSString *leftViewName = @"leftViewName";
                 NSDictionary *variables = @{flowItem.viewName: flowItem.view,
                                             leftViewName: leftView};
-                NSString *visual = [NSString stringWithFormat:@"H:[%@]-(%f)-%@", leftViewName, kFlowMasterPadding, flowItem.visualFormat];
+                NSString *visual = [NSString stringWithFormat:@"H:[%@]-(%f)-%@", leftViewName, kFlowMasterHorizontalPadding, flowItem.visualFormat];
                 [containerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visual
                                                                                       options:0
                                                                                       metrics:nil
                                                                                         views:variables]];
-                rowWidth += kFlowMasterPadding;
+                rowWidth += kFlowMasterHorizontalPadding;
             }
 
             if (i == [flowItems count] - 1) {
