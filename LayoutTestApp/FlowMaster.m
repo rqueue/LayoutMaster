@@ -2,6 +2,7 @@
 #import "FlowItem.h"
 
 static CGFloat const kFlowMasterPadding = 15.0;
+static NSString * const kFlowMasterEqualWidthSyntax = @"==";
 
 @implementation FlowMaster
 
@@ -25,11 +26,19 @@ static CGFloat const kFlowMasterPadding = 15.0;
 
         CGFloat rowWidth = 0;
         NSArray *flowItems = flowItemsRows[row];
+        NSMutableArray *flowItemsWithEqualWidths = [NSMutableArray array];
         for (NSUInteger i = 0; i < [flowItems count]; i++) {
             FlowItem *flowItem = flowItems[i];
 
-            if (flowItem.widthType == FlowItemDimensionTypeFixed) {
-                rowWidth += flowItem.width;
+            switch (flowItem.widthType) {
+                case FlowItemDimensionTypeFixed:
+                    rowWidth += flowItem.width;
+                    break;
+                case FlowItemDimensionTypeEqual:
+                    [flowItemsWithEqualWidths addObject:flowItem];
+                    break;
+                default:
+                    break;
             }
 
             UIView *view = flowItem.view;
@@ -37,7 +46,6 @@ static CGFloat const kFlowMasterPadding = 15.0;
             [containerView addSubview:view];
 
             // Vertical Constraints
-
             if (flowItem.heightType == FlowItemDimensionTypeFixed) {
                 [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
                                                                           attribute:NSLayoutAttributeHeight
@@ -119,6 +127,20 @@ static CGFloat const kFlowMasterPadding = 15.0;
             }
         }
         width = MAX(width, rowWidth);
+
+        if ([flowItemsWithEqualWidths count] > 1) {
+            for (NSUInteger k = 1; k < [flowItemsWithEqualWidths count]; k++) {
+                FlowItem *previousFlowItem = flowItemsWithEqualWidths[k - 1];
+                FlowItem *currentFlowItem = flowItemsWithEqualWidths[k];
+                [containerView addConstraint:[NSLayoutConstraint constraintWithItem:previousFlowItem.view
+                                                                          attribute:NSLayoutAttributeWidth
+                                                                          relatedBy:NSLayoutRelationEqual
+                                                                             toItem:currentFlowItem.view
+                                                                          attribute:NSLayoutAttributeWidth
+                                                                         multiplier:1.0
+                                                                           constant:0.0]];
+            }
+        }
     }
 
     containerView.frame = CGRectMake(0.0, 0.0, width, height);
@@ -132,7 +154,7 @@ static CGFloat const kFlowMasterPadding = 15.0;
     NSMutableArray *flowItems = [NSMutableArray array];
 
     NSString *formatRemaining = [visualFormat copy];
-    NSString *pattern = @"\\[(\\w+)(?:\\((\\d+)\\))?\\]";
+    NSString *pattern = @"\\[(\\w+)(\\(([\\d=]+)\\))?\\]";
     NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
 
     NSString *heightString = [self heightStringForVisualFormat:visualFormat];
@@ -145,14 +167,14 @@ static CGFloat const kFlowMasterPadding = 15.0;
             NSString *widthString = nil;
             NSRange widthRange = [match rangeAtIndex:2];
             if (widthRange.length > 0) {
-                widthString = [formatRemaining substringWithRange:widthRange];
+                widthString = [formatRemaining substringWithRange:[match rangeAtIndex:3]];
             }
 
             FlowItem *flowItem = [[FlowItem alloc] init];
-            flowItem.visualFormat = [formatRemaining substringWithRange:[match rangeAtIndex:0]];
+            flowItem.visualFormat = [self visualFormatForVisualFormat:[formatRemaining substringWithRange:[match rangeAtIndex:0]] widthString:widthString range:widthRange];
             flowItem.viewName = viewString;
             flowItem.width = [widthString floatValue];
-            flowItem.widthType = widthString ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
+            flowItem.widthType = [self flowItemDimensionTypeForWidthString:widthString];
             flowItem.height = [heightString floatValue];
             flowItem.heightType = heightString ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
             flowItem.view = [variableBindings objectForKey:viewString];
@@ -166,6 +188,28 @@ static CGFloat const kFlowMasterPadding = 15.0;
     }
 
     return [flowItems copy];
+}
+
++ (FlowItemDimensionType)flowItemDimensionTypeForWidthString:(NSString *)widthString {
+    if (!widthString) {
+        return FlowItemDimensionTypeDynamic;
+    } else if ([widthString isEqualToString:kFlowMasterEqualWidthSyntax]) {
+        return FlowItemDimensionTypeEqual;
+    } else {
+        return FlowItemDimensionTypeFixed;
+    }
+}
+
++ (NSString *)visualFormatForVisualFormat:(NSString *)visualFormat widthString:(NSString *)widthString range:(NSRange)range {
+    if ([widthString isEqualToString:kFlowMasterEqualWidthSyntax]) {
+        NSMutableString *modifiedVisualFormat = [[NSMutableString alloc] init];
+        [modifiedVisualFormat appendString:[visualFormat substringToIndex:range.location]];
+        NSUInteger widthStringEndIndex = range.location + range.length;
+        [modifiedVisualFormat appendString:[visualFormat substringWithRange:NSMakeRange(widthStringEndIndex, [visualFormat length] - widthStringEndIndex)]];
+        return [modifiedVisualFormat copy];
+    } else {
+        return visualFormat;
+    }
 }
 
 + (NSString *)heightStringForVisualFormat:(NSString *)visualFormat {

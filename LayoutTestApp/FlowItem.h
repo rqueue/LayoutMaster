@@ -4,6 +4,7 @@
 typedef NS_ENUM(NSInteger, FlowItemDimensionType) {
     FlowItemDimensionTypeFixed,
     FlowItemDimensionTypeDynamic,
+    FlowItemDimensionTypeEqual,
 };
 
 @interface FlowItem : NSObject

@@ -37,16 +37,20 @@
 //                                                                @"[view5(60)][view6(100)](200)"]
 //                                             variableBindings:variables];
 
+    UIColor *sizeColor = [[UIColor grayColor] colorWithAlphaComponent:0.2];
+
     UIImageView *p = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Person"]];
-    p.backgroundColor = [UIColor clearColor];
+    p.backgroundColor = sizeColor;
 
     UILabel *title = [UILabel new];
     title.font = [UIFont fontWithName:@"Arial-Bold" size:17.0];
     title.text = @"Here is the title";
+    title.backgroundColor = sizeColor;
 
     UILabel *sub = [UILabel new];
     sub.font = [UIFont fontWithName:@"Arial" size:13.0];
     sub.text = @"Subtext description here";
+    sub.backgroundColor = sizeColor;
 
     NSDictionary *tv = NSDictionaryOfVariableBindings(title, sub);
     UIView *text = [FlowMaster viewFromVisualFormats:@[@"[title](21)",
@@ -54,30 +58,31 @@
                                     variableBindings:tv];
 
     UITextView *body = [UITextView new];
+    body.backgroundColor = sizeColor;
     body.font = [UIFont fontWithName:@"Helvetica" size:15.0];
     body.text = @"Here is some text that should be displayed in the body of this view. It should span multiple lines.";
 
     UIButton *b1 = [[UIButton alloc] init];
     [b1 setTitle:@"Agree" forState:UIControlStateNormal];
     [b1 setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
-    b1.backgroundColor = [UIColor whiteColor];
+    b1.backgroundColor = sizeColor;
     UIButton *b2 = [[UIButton alloc] init];
     [b2 setTitle:@"Disagree" forState:UIControlStateNormal];
     [b2 setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
-    b2.backgroundColor = [UIColor whiteColor];
+    b2.backgroundColor = sizeColor;
     UIButton *b3 = [[UIButton alloc] init];
     [b3 setTitle:@"Unsure" forState:UIControlStateNormal];
     [b3 setTitleColor:[UIColor purpleColor] forState:UIControlStateNormal];
-    b3.backgroundColor = [UIColor whiteColor];
+    b3.backgroundColor = sizeColor;
 
     NSDictionary *cv = NSDictionaryOfVariableBindings(p, text, body, b1, b2, b3);
     UIView *card = [FlowMaster viewFromVisualFormats:@[@"[p(48)][text](48)",
                                                        @"[body]",
-                                                       @"[b1(80)][b2(80)][b3(80)](40)"]
+                                                       @"[b1(==)][b2(==)][b3(==)](40)"]
                                     variableBindings:cv];
 
 
-    UIView *containerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 300.0, 218.0)];
+    UIView *containerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 350.0, 218.0)];
     containerView.translatesAutoresizingMaskIntoConstraints = NO;
     containerView.backgroundColor = [UIColor whiteColor];
     containerView.layer.cornerRadius = 3.0;
