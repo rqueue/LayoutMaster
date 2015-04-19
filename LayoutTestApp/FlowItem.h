@@ -11,6 +11,7 @@ typedef NS_ENUM(NSInteger, FlowItemDimensionType) {
 
 @property (nonatomic, copy) NSString *visualFormat;
 @property (nonatomic, copy) NSString *viewName;
+@property (nonatomic, copy) NSString *rowLabel;
 @property (nonatomic) UIView *view;
 @property (nonatomic) FlowItemDimensionType heightType;
 @property (nonatomic) FlowItemDimensionType widthType;

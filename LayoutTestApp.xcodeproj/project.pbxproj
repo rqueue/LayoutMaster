@@ -16,6 +16,8 @@
 		94401B141AE0C8F300E148B8 /* LayoutTestAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 94401B131AE0C8F300E148B8 /* LayoutTestAppTests.m */; };
 		94401B1F1AE0CADF00E148B8 /* FlowMaster.m in Sources */ = {isa = PBXBuildFile; fileRef = 94401B1E1AE0CADF00E148B8 /* FlowMaster.m */; };
 		94401B231AE0CC0600E148B8 /* FlowItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 94401B221AE0CC0600E148B8 /* FlowItem.m */; };
+		94560C0A1AE3305D006AF9F0 /* FlowRowSpacing.m in Sources */ = {isa = PBXBuildFile; fileRef = 94560C091AE3305D006AF9F0 /* FlowRowSpacing.m */; };
+		94560C0E1AE34305006AF9F0 /* NSMutableArray+Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 94560C0D1AE34305006AF9F0 /* NSMutableArray+Stack.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +48,10 @@
 		94401B1E1AE0CADF00E148B8 /* FlowMaster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlowMaster.m; sourceTree = "<group>"; };
 		94401B211AE0CC0600E148B8 /* FlowItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlowItem.h; sourceTree = "<group>"; };
 		94401B221AE0CC0600E148B8 /* FlowItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlowItem.m; sourceTree = "<group>"; };
+		94560C081AE3305D006AF9F0 /* FlowRowSpacing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlowRowSpacing.h; sourceTree = "<group>"; };
+		94560C091AE3305D006AF9F0 /* FlowRowSpacing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlowRowSpacing.m; sourceTree = "<group>"; };
+		94560C0C1AE34305006AF9F0 /* NSMutableArray+Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Stack.h"; sourceTree = "<group>"; };
+		94560C0D1AE34305006AF9F0 /* NSMutableArray+Stack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Stack.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,12 +135,24 @@
 		94401B201AE0CBEA00E148B8 /* FlowMaster */ = {
 			isa = PBXGroup;
 			children = (
+				94560C0B1AE342F0006AF9F0 /* Categories */,
 				94401B1D1AE0CADF00E148B8 /* FlowMaster.h */,
 				94401B1E1AE0CADF00E148B8 /* FlowMaster.m */,
 				94401B211AE0CC0600E148B8 /* FlowItem.h */,
 				94401B221AE0CC0600E148B8 /* FlowItem.m */,
+				94560C081AE3305D006AF9F0 /* FlowRowSpacing.h */,
+				94560C091AE3305D006AF9F0 /* FlowRowSpacing.m */,
 			);
 			name = FlowMaster;
+			sourceTree = "<group>";
+		};
+		94560C0B1AE342F0006AF9F0 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				94560C0C1AE34305006AF9F0 /* NSMutableArray+Stack.h */,
+				94560C0D1AE34305006AF9F0 /* NSMutableArray+Stack.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -237,10 +255,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94560C0E1AE34305006AF9F0 /* NSMutableArray+Stack.m in Sources */,
 				94401B001AE0C8F300E148B8 /* ViewController.m in Sources */,
 				94401AFD1AE0C8F300E148B8 /* AppDelegate.m in Sources */,
 				94401AFA1AE0C8F300E148B8 /* main.m in Sources */,
 				94401B231AE0CC0600E148B8 /* FlowItem.m in Sources */,
+				94560C0A1AE3305D006AF9F0 /* FlowRowSpacing.m in Sources */,
 				94401B1F1AE0CADF00E148B8 /* FlowMaster.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -432,6 +452,7 @@
 				94401B191AE0C8F300E148B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		94401B1A1AE0C8F300E148B8 /* Build configuration list for PBXNativeTarget "LayoutTestAppTests" */ = {
 			isa = XCConfigurationList;
@@ -440,6 +461,7 @@
 				94401B1C1AE0C8F300E148B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

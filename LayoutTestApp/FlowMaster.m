@@ -1,4 +1,6 @@
 #import "FlowMaster.h"
+#import "NSMutableArray+Stack.h"
+#import "FlowRowSpacing.h"
 #import "FlowItem.h"
 
 static CGFloat const kFlowMasterVerticalPadding = 10.0;
@@ -7,7 +9,7 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
 
 @implementation FlowMaster
 
-+ (UIView *)viewFromVisualFormats:(NSArray *)visualFormats variableBindings:(NSDictionary *)variableBindings {
++ (UIView *)viewFromVisualFormats:(NSArray *)visualFormats rowSpacingVisualFormat:(NSString *)rowSpacingVisualFormat variableBindings:(NSDictionary *)variableBindings {
     UIView *containerView = [[UIView alloc] init];
     containerView.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -20,6 +22,8 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
     CGFloat height = 0;
     CGFloat width = 0;
 
+    NSMutableArray *flowRowSpacings = [NSMutableArray arrayWithArray:[self flowRowSpacingsForRowVisualFormat:rowSpacingVisualFormat]];
+    FlowRowSpacing *flowRowSpacing = [flowRowSpacings pop];
     for (NSUInteger row = 0; row < [flowItemsRows count]; row++) {
         if (row > 0) {
             height += kFlowMasterVerticalPadding;
@@ -59,35 +63,75 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
             
             if (row == 0) {
                 // Constrain view to top
-                [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
-                                                                          attribute:NSLayoutAttributeTop
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:containerView
-                                                                          attribute:NSLayoutAttributeTop
-                                                                         multiplier:1.0
-                                                                           constant:0.0]];
+                if (i == 0) {
+                    CGFloat constant = 0.0;
+                    if (flowRowSpacing && !flowRowSpacing.topRowLabel && [flowRowSpacing.bottomRowLabel isEqualToString:flowItem.rowLabel]) {
+                        constant = flowRowSpacing.spacing;
+                        flowRowSpacing = [flowRowSpacings pop];
+                    }
+                    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                                              attribute:NSLayoutAttributeTop
+                                                                              relatedBy:NSLayoutRelationEqual
+                                                                                 toItem:containerView
+                                                                              attribute:NSLayoutAttributeTop
+                                                                             multiplier:1.0
+                                                                               constant:constant]];
+                } else {
+                    FlowItem *firstFlowItem = flowItems[0];
+                    UIView *firstView = firstFlowItem.view;
+                    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                                              attribute:NSLayoutAttributeTop
+                                                                              relatedBy:NSLayoutRelationEqual
+                                                                                 toItem:firstView
+                                                                              attribute:NSLayoutAttributeTop
+                                                                             multiplier:1.0
+                                                                               constant:0.0]];
+                }
             } else {
                 // Constrain view to a view above
                 FlowItem *aboveFlowItem = flowItemsRows[row - 1][0];
                 UIView *aboveView = aboveFlowItem.view;
+
+                CGFloat constant = kFlowMasterVerticalPadding;
+                if (flowRowSpacing && [flowRowSpacing.topRowLabel isEqualToString:aboveFlowItem.rowLabel] && [flowRowSpacing.bottomRowLabel isEqualToString:flowItem.rowLabel]) {
+                    constant = flowRowSpacing.spacing;
+                    flowRowSpacing = [flowRowSpacings pop];
+                }
                 [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
                                                                           attribute:NSLayoutAttributeTop
                                                                           relatedBy:NSLayoutRelationEqual
                                                                              toItem:aboveView
                                                                           attribute:NSLayoutAttributeBottom
                                                                          multiplier:1.0
-                                                                           constant:kFlowMasterVerticalPadding]];
+                                                                           constant:constant]];
             }
 
             if (row == [flowItemsRows count] - 1) {
                 // Constrain view to bottom
-                [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
-                                                                          attribute:NSLayoutAttributeBottom
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:containerView
-                                                                          attribute:NSLayoutAttributeBottom
-                                                                         multiplier:1.0
-                                                                           constant:0.0]];
+                if (i == 0) {
+                    CGFloat constant = 0.0;
+                    if (flowRowSpacing && [flowRowSpacing.topRowLabel isEqualToString:flowItem.rowLabel] && !flowRowSpacing.bottomRowLabel) {
+                        constant = flowRowSpacing.spacing;
+                        flowRowSpacing = [flowRowSpacings pop];
+                    }
+                    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:containerView
+                                                                              attribute:NSLayoutAttributeBottom
+                                                                              relatedBy:NSLayoutRelationEqual
+                                                                                 toItem:view
+                                                                              attribute:NSLayoutAttributeBottom
+                                                                             multiplier:1.0
+                                                                               constant:constant]];
+                } else {
+                    FlowItem *firstFlowItem = flowItems[0];
+                    UIView *firstView = firstFlowItem.view;
+                    [containerView addConstraint:[NSLayoutConstraint constraintWithItem:view
+                                                                              attribute:NSLayoutAttributeBottom
+                                                                              relatedBy:NSLayoutRelationEqual
+                                                                                 toItem:firstView
+                                                                              attribute:NSLayoutAttributeBottom
+                                                                             multiplier:1.0
+                                                                               constant:0.0]];
+                }
             }
 
             // Horizontal Constraints
@@ -127,6 +171,7 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
                                                                                         views:@{flowItem.viewName: flowItem.view}]];
             }
         }
+
         width = MAX(width, rowWidth);
 
         if ([flowItemsWithEqualWidths count] > 1) {
@@ -153,15 +198,16 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
 
 + (NSArray *)flowItemsForVisualFormat:(NSString *)visualFormat variableBindings:(NSDictionary *)variableBindings {
     NSMutableArray *flowItems = [NSMutableArray array];
+    NSString *rowLabel = [self rowLabelForVisualFormat:visualFormat];
 
-    NSString *formatRemaining = [visualFormat copy];
+    NSString *formatRemaining = [self visualFormatByRemovingRowLabel:visualFormat];
     NSString *pattern = @"\\[(\\w+)(\\(([\\d=]+)\\))?\\]";
     NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
 
     NSString *heightString = [self heightStringForVisualFormat:visualFormat];
 
     while ([formatRemaining length] > 0) {
-//        NSLog(@"format: %@", formatRemaining);
+        NSLog(@"flow itme form: %@", formatRemaining);
         NSTextCheckingResult *match = [regex firstMatchInString:formatRemaining options:0 range:NSMakeRange(0, [formatRemaining length])];
         if (match) {
             NSString *viewString = [formatRemaining substringWithRange:[match rangeAtIndex:1]];
@@ -170,8 +216,9 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
             if (widthRange.length > 0) {
                 widthString = [formatRemaining substringWithRange:[match rangeAtIndex:3]];
             }
-
+            NSLog(@"match: %@", [formatRemaining substringWithRange:[match rangeAtIndex:0]]);
             FlowItem *flowItem = [[FlowItem alloc] init];
+            flowItem.rowLabel = rowLabel;
             flowItem.visualFormat = [self visualFormatForVisualFormat:[formatRemaining substringWithRange:[match rangeAtIndex:0]] widthString:widthString range:widthRange];
             flowItem.viewName = viewString;
             flowItem.width = [widthString floatValue];
@@ -180,10 +227,8 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
             flowItem.heightType = heightString ? FlowItemDimensionTypeFixed : FlowItemDimensionTypeDynamic;
             flowItem.view = [variableBindings objectForKey:viewString];
             [flowItems addObject:flowItem];
-
             formatRemaining = [formatRemaining substringFromIndex:match.range.location + match.range.length];
         } else {
-//            NSLog(@"no match");
             break;
         }
     }
@@ -221,12 +266,81 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
         NSRange heightValueRange = [heightMatch rangeAtIndex:1];
         if (heightValueRange.length > 0) {
             return [visualFormat substringWithRange:[heightMatch rangeAtIndex:1]];
-        } else {
-            return nil;
         }
-    } else {
-        return nil;
     }
+    return nil;
+}
+
++ (NSString *)rowLabelForVisualFormat:(NSString *)visualFormat {
+    NSTextCheckingResult *match = [self rowLabelMatchForVisualFormat:visualFormat];
+    if (match) {
+        NSRange rowLabelRange = [match rangeAtIndex:1];
+        if (rowLabelRange.length > 0) {
+            return [visualFormat substringWithRange:rowLabelRange];
+        }
+    }
+    return nil;
+}
+
++ (NSString *)visualFormatByRemovingRowLabel:(NSString *)visualFormat {
+    NSTextCheckingResult *match = [self rowLabelMatchForVisualFormat:visualFormat];
+    if (match) {
+        NSRange range = [match rangeAtIndex:0];
+        return [visualFormat substringFromIndex:range.location + range.length];
+    }
+    return visualFormat;
+}
+
++ (NSTextCheckingResult *)rowLabelMatchForVisualFormat:(NSString *)visualFormat {
+    NSString *pattern = @"^(\\w+):";
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil];
+    NSTextCheckingResult *match = [regex firstMatchInString:visualFormat options:0 range:NSMakeRange(0, [visualFormat length])];
+    return match;
+}
+
++ (NSArray *)flowRowSpacingsForRowVisualFormat:(NSString *)rowVisualFormat {
+    NSMutableArray *flowRowSpacings = [NSMutableArray array];
+    NSString *pattern = @"(?:\\||(?:\\[(\\w+)\\]))-(?:(?:(\\d+))|(?:\\((\\d+)\\)))-(?:\\||(?:\\[(\\w+)\\]))";
+    NSString *formatRemaining = [rowVisualFormat copy];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:nil];
+
+    while ([formatRemaining length] > 0) {
+        NSTextCheckingResult *match = [regex firstMatchInString:formatRemaining options:0 range:NSMakeRange(0, [formatRemaining length])];
+        if (match) {
+//            NSLog(@"for: %@ ==================================================", formatRemaining);
+//            for (NSUInteger i = 0; i < match.numberOfRanges; i++) {
+//                NSRange range = [match rangeAtIndex:i];
+//                if (range.length > 0) {
+//                    NSLog(@"match %d: %@", (int)i, [formatRemaining substringWithRange:range]);
+//                }
+//            }
+            NSRange topRowLabelRange = [match rangeAtIndex:1];
+            NSRange spacingStringRangeWithoutParen = [match rangeAtIndex:2];
+            NSRange spacingStringRangeWithParen = [match rangeAtIndex:3];
+            NSRange spacingStringRange = spacingStringRangeWithoutParen.length > 0 ? spacingStringRangeWithoutParen : spacingStringRangeWithParen;
+            NSRange bottomRowLabelRange = [match rangeAtIndex:4];
+
+            NSString *topRowLabel = topRowLabelRange.length > 0 ? [formatRemaining substringWithRange:topRowLabelRange] : nil;
+            NSString *spacingString = [formatRemaining substringWithRange:spacingStringRange];
+            NSString *bottomRowLabel = bottomRowLabelRange.length > 0 ? [formatRemaining substringWithRange:bottomRowLabelRange] : nil;
+
+            FlowRowSpacing *flowRowSpacing = [[FlowRowSpacing alloc] init];
+            flowRowSpacing.topRowLabel = topRowLabel;
+            flowRowSpacing.bottomRowLabel = bottomRowLabel;
+            flowRowSpacing.spacing = [spacingString floatValue];
+            [flowRowSpacings addObject:flowRowSpacing];
+
+            if (bottomRowLabelRange.length > 0) {
+                formatRemaining = [formatRemaining substringFromIndex:bottomRowLabelRange.location - 1];
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    return [flowRowSpacings copy];
 }
 
 @end

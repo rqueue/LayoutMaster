@@ -50,12 +50,14 @@
     UILabel *sub = [UILabel new];
     sub.font = [UIFont fontWithName:@"Arial" size:13.0];
     sub.text = @"Subtext description here";
-    sub.backgroundColor = sizeColor;
+    sub.backgroundColor = [[UIColor grayColor] colorWithAlphaComponent:0.5];
 
     NSDictionary *tv = NSDictionaryOfVariableBindings(title, sub);
-    UIView *text = [FlowMaster viewFromVisualFormats:@[@"[title](21)",
-                                                       @"[sub]"]
+    UIView *text = [FlowMaster viewFromVisualFormats:@[@"R1:[title](21)",
+                                                       @"R2:[sub]"]
+                              rowSpacingVisualFormat:@"[R1]-(0)-[R2]"
                                     variableBindings:tv];
+    text.backgroundColor = [[UIColor greenColor] colorWithAlphaComponent:0.4];
 
     UITextView *body = [UITextView new];
     body.backgroundColor = sizeColor;
@@ -76,12 +78,16 @@
     b3.backgroundColor = sizeColor;
 
     NSDictionary *cv = NSDictionaryOfVariableBindings(p, text, body, b1, b2, b3);
-    UIView *card = [FlowMaster viewFromVisualFormats:@[@"[p(48)][text](48)",
-                                                       @"[body]",
-                                                       @"[b1(==)][b2(==)][b3(==)](40)"]
+    UIView *card = [FlowMaster viewFromVisualFormats:@[@"R1:[p(48)][text](48)",
+                                                       @"R2:[body]",
+                                                       @"R3:[b1(==)][b2(==)][b3(==)](40)"]
+                              rowSpacingVisualFormat:@"|-15-[R1]-10-[R2]-10-[R3]-15-|"
                                     variableBindings:cv];
 
-
+    card.backgroundColor = [UIColor colorWithRed:0 green:190 blue:140 alpha:1];
+    card.frame = CGRectMake(0.0, 0.0, 350, 218);
+    [self.view addSubview:card];
+/*
     UIView *containerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 350.0, 218.0)];
     containerView.translatesAutoresizingMaskIntoConstraints = NO;
     containerView.backgroundColor = [UIColor whiteColor];
@@ -89,24 +95,25 @@
     containerView.layer.borderWidth = 1.0;
     containerView.layer.borderColor = [UIColor blackColor].CGColor;
     [self.view addSubview:containerView];
+ */
 
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:containerView
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:card
                                                           attribute:NSLayoutAttributeHeight
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:nil
                                                           attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1.0
-                                                           constant:containerView.frame.size.height]];
+                                                           constant:card.frame.size.height]];
 
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:containerView
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:card
                                                           attribute:NSLayoutAttributeWidth
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:nil
                                                           attribute:NSLayoutAttributeNotAnAttribute
                                                          multiplier:1.0
-                                                           constant:containerView.frame.size.width]];
+                                                           constant:card.frame.size.width]];
 
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:containerView
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:card
                                                           attribute:NSLayoutAttributeCenterX
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.view
@@ -114,7 +121,7 @@
                                                          multiplier:1.0
                                                            constant:0.0]];
 
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:containerView
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:card
                                                           attribute:NSLayoutAttributeCenterY
                                                           relatedBy:NSLayoutRelationEqual
                                                              toItem:self.view
@@ -122,7 +129,7 @@
                                                          multiplier:1.0
                                                            constant:0.0]];
 
-
+/*
     [containerView addSubview:card];
     [containerView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[c]-15-|"
                                                                           options:0
@@ -132,7 +139,7 @@
                                                                           options:0
                                                                           metrics:nil
                                                                             views:@{@"c": card}]];
-
+*/
 }
 
 - (void)viewDidAppear:(BOOL)animated {

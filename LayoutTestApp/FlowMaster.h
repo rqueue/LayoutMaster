@@ -4,6 +4,6 @@
 @interface FlowMaster : NSObject
 
 // Returns view at min size
-+ (UIView *)viewFromVisualFormats:(NSArray *)visualFormats variableBindings:(NSDictionary *)variableBindings;
++ (UIView *)viewFromVisualFormats:(NSArray *)visualFormats rowSpacingVisualFormat:(NSString *)rowSpacingVisualFormat variableBindings:(NSDictionary *)variableBindings;
 
 @end

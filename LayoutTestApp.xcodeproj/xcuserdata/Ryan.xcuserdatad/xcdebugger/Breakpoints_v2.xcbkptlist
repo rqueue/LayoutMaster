@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LayoutTestApp/FlowMaster.m"
-            timestampString = "451081676.430312"
+            timestampString = "451104574.643783"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "+viewFromVisualFormats:variableBindings:"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
+            landmarkName = "+viewFromVisualFormats:rowSpacingVisualFormat:variableBindings:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LayoutTestApp/FlowMaster.m"
-            timestampString = "451081676.430312"
+            timestampString = "451104574.643783"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "+viewFromVisualFormats:variableBindings:"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
+            landmarkName = "+viewFromVisualFormats:rowSpacingVisualFormat:variableBindings:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -42,13 +42,55 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LayoutTestApp/FlowMaster.m"
-            timestampString = "451081676.430312"
+            timestampString = "451104574.643783"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "+viewFromVisualFormats:variableBindings:"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "+viewFromVisualFormats:rowSpacingVisualFormat:variableBindings:"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LayoutTestApp/FlowMaster.m"
+            timestampString = "451101890.04992"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "+viewFromVisualFormats:rowSpacingVisualFormat:variableBindings:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LayoutTestApp/FlowMaster.m"
+            timestampString = "451104574.643783"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "324"
+            endingLineNumber = "324"
+            landmarkName = "+flowRowSpacingsForRowVisualFormat:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
