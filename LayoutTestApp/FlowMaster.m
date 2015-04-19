@@ -207,7 +207,6 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
     NSString *heightString = [self heightStringForVisualFormat:visualFormat];
 
     while ([formatRemaining length] > 0) {
-        NSLog(@"flow itme form: %@", formatRemaining);
         NSTextCheckingResult *match = [regex firstMatchInString:formatRemaining options:0 range:NSMakeRange(0, [formatRemaining length])];
         if (match) {
             NSString *viewString = [formatRemaining substringWithRange:[match rangeAtIndex:1]];
@@ -216,7 +215,6 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
             if (widthRange.length > 0) {
                 widthString = [formatRemaining substringWithRange:[match rangeAtIndex:3]];
             }
-            NSLog(@"match: %@", [formatRemaining substringWithRange:[match rangeAtIndex:0]]);
             FlowItem *flowItem = [[FlowItem alloc] init];
             flowItem.rowLabel = rowLabel;
             flowItem.visualFormat = [self visualFormatForVisualFormat:[formatRemaining substringWithRange:[match rangeAtIndex:0]] widthString:widthString range:widthRange];
@@ -307,13 +305,6 @@ static NSString * const kFlowMasterEqualWidthSyntax = @"==";
     while ([formatRemaining length] > 0) {
         NSTextCheckingResult *match = [regex firstMatchInString:formatRemaining options:0 range:NSMakeRange(0, [formatRemaining length])];
         if (match) {
-//            NSLog(@"for: %@ ==================================================", formatRemaining);
-//            for (NSUInteger i = 0; i < match.numberOfRanges; i++) {
-//                NSRange range = [match rangeAtIndex:i];
-//                if (range.length > 0) {
-//                    NSLog(@"match %d: %@", (int)i, [formatRemaining substringWithRange:range]);
-//                }
-//            }
             NSRange topRowLabelRange = [match rangeAtIndex:1];
             NSRange spacingStringRangeWithoutParen = [match rangeAtIndex:2];
             NSRange spacingStringRangeWithParen = [match rangeAtIndex:3];
